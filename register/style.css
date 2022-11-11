@@ -3,7 +3,7 @@
   font-family: "Poppins";
   font-style: normal;
   font-weight: 300;
-  src: url("../fonts/poppins/poppins-v5-latin-300.eot");
+  src: url("../../fonts/poppins/poppins-v5-latin-300.eot");
   /* IE9 Compat Modes */
   src: local("Poppins Light"), local("Poppins-Light"),
     url("../fonts/poppins/poppins-v5-latin-300.eot?#iefix")
