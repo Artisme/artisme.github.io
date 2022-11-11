@@ -1,0 +1,25 @@
+table, th, td {
+    border: 1px solid black;
+    border-collapse: collapse;
+    padding: 7px;
+}
+
+th {
+    text-align: center;
+    color: white;
+    background-color: grey;
+}
+
+tr:nth-child(even) {
+    background-color: yellow;
+}
+
+.corner {
+    height: 100px;
+    margin: 8px;
+    max-width: 100px;
+    border: 3px solid green;
+    position: fixed;
+    right: 0;
+    top: 0;
+}
