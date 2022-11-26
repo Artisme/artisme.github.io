@@ -1,0 +1,15 @@
+div {
+  background-color: red;
+  margin: 10px;
+  height: 200px;
+  width: 200px;
+}
+
+.sqr1:hover {
+  width: 800px;
+}
+
+.sqr2:hover {
+    width: 400px;
+    height: 400px;
+}
