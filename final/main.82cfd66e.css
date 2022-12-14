@@ -297,8 +297,8 @@ img {
 }
 .img-responsive {
   display: block;
+  max-height: 100%;
   max-width: 100%;
-  height: auto;
 }
 .img-rounded {
   border-radius: 2px;
@@ -4968,4 +4968,30 @@ main {
   float: left;
   margin-right: 5px;
 }
-/*# sourceMappingURL=main.85741bff.map*/
+
+.dflex {
+  display: flex;
+}
+
+html, body, .hero-full-wrapper {
+  height: 100%;
+  width: 100%;
+}
+
+.hero-full-wrapper {
+  align-items: center;
+  flex-direction: column;
+}
+
+.main-image {
+  overflow: auto;
+}
+
+.img-nav {
+  margin-top: auto;
+  display: flex;
+}
+
+.img-nav > p {
+  margin: 0;
+}
