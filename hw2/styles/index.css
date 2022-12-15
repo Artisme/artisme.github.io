@@ -20,6 +20,10 @@ html {
   box-sizing: inherit;
 }
 
+a {
+  text-decoration: none;
+}
+
 .title-bar {
   background-color: rgb(29, 29, 29);
   height: 75px;
@@ -56,10 +60,15 @@ ul {
   width: 225px;
 }
 
-.sidebar-nav > li > div {
+.sidebar-nav > li div {
   color: rgb(201, 201, 201);
   padding: 20px 15px;
   border-bottom: 1px solid white;
+  transition: 0.3s;
+}
+
+.sidebar-nav > li div:hover {
+  background-color: white;
 }
 
 #sidebar-toggle {
