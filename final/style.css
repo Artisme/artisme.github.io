@@ -228,6 +228,8 @@ p {
   border-bottom: 1px solid #eee;
 }
 ul {
+    list-style: none;
+    padding: 0;
   margin-top: 0;
   margin-bottom: 12px;
 }
@@ -236,6 +238,9 @@ ul ul {
 }
 .collapse {
   display: none;
+}
+.open > a {
+  outline: 0;
 }
 .nav {
   margin-bottom: 0;
@@ -262,6 +267,12 @@ ul ul {
 .nav > li > a:hover {
   text-decoration: none;
   background-color: transparent;
+}
+.nav .open > a,
+.nav .open > a:focus,
+.nav .open > a:hover {
+  background-color: transparent;
+  border-color: #66afe9;
 }
 .nav > li > a > img {
   max-width: none;
@@ -427,6 +438,12 @@ ul ul {
   color: #333;
   background-color: transparent;
 }
+.navbar-default .navbar-nav > .active > a,
+.navbar-default .navbar-nav > .active > a:focus,
+.navbar-default .navbar-nav > .active > a:hover {
+  color: #555;
+  background-color: transparent;
+}
 .navbar-default .navbar-toggle {
   border-color: transparent;
 }
@@ -439,6 +456,12 @@ ul ul {
 }
 .navbar-default .navbar-collapse {
   border-color: transparent;
+}
+.navbar-default .navbar-nav > .open > a,
+.navbar-default .navbar-nav > .open > a:focus,
+.navbar-default .navbar-nav > .open > a:hover {
+  background-color: transparent;
+  color: #555;
 }
 .navbar-default .navbar-link {
   color: #000;
@@ -508,6 +531,9 @@ main {
 .sidebar .navbar-collapse {
   padding: 0;
 }
+.sidebar.open {
+  left: 0;
+}
 @media (min-width: 768px) {
   .sidebar {
     padding: 30px;
@@ -540,6 +566,9 @@ main {
 .nav > li > a {
   color: #000;
 }
+.nav > li > a.active {
+  font-weight: 700;
+}
 .nav > li > a:hover {
   color: #66afe9;
 }
@@ -555,21 +584,10 @@ main {
   float: left;
   margin-right: 0;
 }
-.dflex {
-  display: flex;
-}
-.hero-full-wrapper,
 body,
 html {
   height: 100%;
   width: 100%;
-}
-.hero-full-wrapper {
-  align-items: center;
-  flex-direction: column;
-}
-.main-image {
-  overflow: auto;
 }
 .img-nav {
   font-size: large;
@@ -588,20 +606,27 @@ html {
 .img-title > h3 {
   margin: 0;
 }
-
-ul {
+.img-content {
   display: flex;
   flex-wrap: wrap;
 }
 
-li {
+.img-content li {
   height: 40vh;
   flex-grow: 1;
 }
 
-img {
+.img-content img {
   max-height: 100%;
   min-width: 100%;
   object-fit: cover;
   vertical-align: bottom;
+}
+
+.img-content li:last-child {
+  flex-grow: 10;
+}
+
+.nav-footer {
+  margin-top: auto;
 }

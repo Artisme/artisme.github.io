@@ -7,10 +7,11 @@
     <meta content="description" name="description" />
     <link href="./assets/apple-icon-180x180.png" rel="apple-touch-icon" />
     <link href="./assets/favicon.ico" rel="icon" />
+    <script type="text/javascript" src="./script.js" defer></script>
 
     <title>About</title>
 
-    <link href="./main.82cfd66e.css" rel="stylesheet" />
+    <link href="./style.css" rel="stylesheet" />
   </head>
 
   <body>
@@ -41,9 +42,7 @@
           <ul class="nav">
             <li><a href="./index.html" title="">Home</a></li>
             <li><a href="./about.html" title="">About</a></li>
-            <li><a href="./services.html" title="">Services</a></li>
             <li><a href="./contact.html" title="">Contact</a></li>
-            <li><a href="./components.html" title="">Components</a></li>
           </ul>
 
           <nav class="nav-footer">
@@ -57,18 +56,6 @@
               <a class="fa-icon" href="https://twitter.com/" title="">
                 <i class="fa fa-twitter"></i>
               </a>
-            </p>
-            <p>
-              © Untitled | Website created with
-              <a
-                href="http://www.mashup-template.com/"
-                title="Create website with free html template"
-                >Mashup Template</a
-              >/<a
-                href="https://www.unsplash.com/"
-                title="Beautiful Free Images"
-                >Unsplash</a
-              >
             </p>
           </nav>
         </div>
@@ -121,24 +108,5 @@
         </div>
       </div>
     </main>
-
-    <script>
-      // Sidebar
-      document.querySelector(".navbar-toggle").addEventListener("click", () => {
-        document.querySelector("#main-collapse").classList.toggle("open");
-        document.querySelector(".sidebar").classList.toggle("open");
-      });
-      // Active page
-      let x = document.querySelector(
-        'nav li a[href=".' + location.pathname + '"]'
-      );
-      if (x) {
-        x.classList.add("active");
-      } else {
-        document
-          .querySelector('nav li a[href="./index.html"]')
-          .classList.add("active");
-      }
-    </script>
   </body>
 </html>
