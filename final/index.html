@@ -8,10 +8,10 @@
     <meta name="google" content="notranslate" />
     <link href="./assets/apple-icon-180x180.png" rel="apple-touch-icon" />
     <link href="./assets/favicon.ico" rel="icon" />
+    <link href="./style.css" rel="stylesheet" />
+    <script type="text/javascript" src="./script.js" defer></script>
 
     <title>Phot0graphy</title>
-
-    <link href="./main.82cfd66e.css" rel="stylesheet" />
   </head>
 
   <body>
@@ -42,17 +42,14 @@
           <ul class="nav">
             <li><a href="./index.html" title="">Home</a></li>
             <li><a href="./about.html" title="">About</a></li>
-            <li><a href="./services.html" title="">Services</a></li>
             <li><a href="./contact.html" title="">Contact</a></li>
-            <li><a href="./components.html" title="">Components</a></li>
           </ul>
 
+          <div class="img-title"><h3>Vivamus vestibulum</h3></div>
           <nav class="img-nav">
-            <p>
-              <span>prev</span>
-              /
-              <span>next</span>
-            </p>
+            <b>prev</b>
+            /
+            <b>next</b>
           </nav>
           <nav class="nav-footer">
             <p class="nav-footer-social-buttons">
@@ -66,21 +63,13 @@
                 <i class="fa fa-twitter"></i>
               </a>
             </p>
-            <p>© Phot0graphy 2022</p>
           </nav>
         </div>
       </nav>
     </header>
     <main class="" id="main-collapse">
       <div class="hero-full-wrapper dflex">
-        <a href="./project.html" class="project-description">
-          <div class="project-text-holder">
-            <div class="project-text-inner">
-              <h3>Vivamus vestibulum</h3>
-              <p>Discover more</p>
-            </div>
-          </div>
-        </a>
+        <a href="./project.html" class="project-description"> </a>
         <img
           class="img-responsive main-image"
           alt=""
@@ -88,30 +77,5 @@
         />
       </div>
     </main>
-    <script>
-      // Sidebar
-      function toggleSidebar() {
-        document
-          .querySelector(".navbar-toggle")
-          .addEventListener("click", () => {
-            document.querySelector("#main-collapse").classList.toggle("open");
-            document.querySelector(".sidebar").classList.toggle("open");
-          });
-      }
-      // Active page
-      function activePage() {
-        let x = document.querySelector(
-          'nav li a[href=".' + location.pathname + '"]'
-        );
-        if (x) {
-          x.classList.add("active");
-        } else {
-          document
-            .querySelector('nav li a[href="./index.html"]')
-            .classList.add("active");
-        }
-      }
-      activePage();
-    </script>
   </body>
 </html>

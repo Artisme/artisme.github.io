@@ -129,9 +129,16 @@
         document.querySelector(".sidebar").classList.toggle("open");
       });
       // Active page
-      document.querySelector('nav li a[href=".' + location.pathname + '"]').classList.add("active");
-      "/" == location.pathname &&
-        document.querySelector('nav li a[href="./index.html"]').classList.add("active");
+      let x = document.querySelector(
+        'nav li a[href=".' + location.pathname + '"]'
+      );
+      if (x) {
+        x.classList.add("active");
+      } else {
+        document
+          .querySelector('nav li a[href="./index.html"]')
+          .classList.add("active");
+      }
     </script>
   </body>
 </html>
