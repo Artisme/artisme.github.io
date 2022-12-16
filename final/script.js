@@ -4,7 +4,7 @@ document.querySelector(".navbar-toggle").addEventListener("click", () => {
   document.querySelector(".sidebar").classList.toggle("open");
 });
 // Active page
-let x = document.querySelector('nav li a[href=".' + location.pathname + '"]');
+let x = document.querySelector('nav li a[href=".' + location.pathname.slice(5) + '"]');
 if (x) {
   x.classList.add("active");
 } else {
