@@ -36,6 +36,7 @@ h1 {
   margin: 0.67em 0;
 }
 img {
+  object-fit: cover;
   border: 0;
 }
 svg:not(:root) {
@@ -143,9 +144,10 @@ img {
   vertical-align: middle;
 }
 .img-responsive {
+  margin: auto;
   display: block;
-  max-height: 100%;
-  max-width: 100%;
+  max-height: 50vh;
+  max-width: 50vw;
 }
 .sr-only {
   position: absolute;
@@ -261,6 +263,7 @@ ul ul {
   display: block;
 }
 .nav > li > a {
+  transition: .2s;
   padding: 5px 0;
 }
 .nav > li > a:focus,
@@ -499,7 +502,6 @@ main {
   -o-transition: all 0.2s linear;
   transition: all 0.2s linear;
   padding: 15px;
-  height: 100%;
 }
 @media (min-width: 768px) {
   main {
@@ -508,10 +510,11 @@ main {
 }
 @media (min-width: 992px) {
   main {
-    padding: 30px;
+    padding: 0px;
   }
 }
 .sidebar {
+  box-shadow: 6px 0 4px -4px rgba(0, 0, 0, 0.2), -6px 0 4px -4px rgba(0, 0, 0, 0.2); 
   position: fixed;
   top: 0;
   bottom: 0;
@@ -594,7 +597,7 @@ html {
   margin-bottom: 12px;
 }
 .img-nav > b {
-  transition: color 0.3s;
+  transition: color 0.2s;
 }
 .img-nav > b:hover {
   color: #66afe9;
@@ -608,19 +611,29 @@ html {
 }
 .img-content {
   display: flex;
+  justify-content: center;
+  align-items: center;
   flex-wrap: wrap;
+  overflow:hidden;
 }
 
 .img-content li {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   height: 40vh;
   flex-grow: 1;
 }
 
 .img-content img {
+  height: 100%;
+  cursor: pointer;
+  transition: .1s;
   max-height: 100%;
   min-width: 100%;
-  object-fit: cover;
   vertical-align: bottom;
+  box-shadow: 0 1px 10px rgba(0, 0, 0, 0.2);
+  object-fit: cover;
 }
 
 .img-content li:last-child {
@@ -629,4 +642,28 @@ html {
 
 .nav-footer {
   margin-top: auto;
+}
+
+.img-content img:hover {
+  transform: scale(1.075);
+}
+
+#main-collapse {
+  height: 100%;
+}
+
+.activeimg, .activeimg > li {
+  height: 100%;
+  max-width: 100%;
+  max-height: 100%;
+  margin: auto;
+}
+
+.activeimg img {
+  height: auto;
+  min-width: auto;
+}
+
+.hidden {
+  display: "none";
 }
