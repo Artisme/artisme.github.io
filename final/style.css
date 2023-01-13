@@ -589,6 +589,7 @@ main {
 }
 body,
 html {
+  user-select: none;
   height: 100%;
   width: 100%;
 }
@@ -666,4 +667,8 @@ html {
 
 .hidden {
   display: "none";
+}
+
+.img-nav b {
+  cursor: pointer;
 }
