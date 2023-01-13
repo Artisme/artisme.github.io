@@ -632,7 +632,6 @@ html {
   transition: .1s;
   max-height: 100%;
   min-width: 100%;
-  vertical-align: bottom;
   box-shadow: 0 1px 10px rgba(0, 0, 0, 0.2);
   object-fit: cover;
 }
@@ -660,14 +659,19 @@ html {
   margin: auto;
 }
 
+ul > .otherimgs {
+  display: none;
+}
+
+ul > .activeimg {
+  display: flex;
+}
+
 .activeimg img {
   height: auto;
   min-width: auto;
 }
 
-.hidden {
-  display: "none";
-}
 
 .img-nav b {
   cursor: pointer;

@@ -33,11 +33,8 @@ imgContent.forEach((img) => {
   img.addEventListener("click", () => {
     document.querySelector("#main-collapse > ul").classList.toggle("activeimg");
     img.classList.toggle("activeimg");
-    let otherImgs = document.querySelectorAll(
-      ".img-content li:not(.activeimg)"
-    );
-    otherImgs.forEach((othImg) => {
-      othImg.classList.toggle("hidden");
+    imgContent.forEach((othImg) => {
+      othImg.classList.toggle("otherimgs");
     });
   });
 });
