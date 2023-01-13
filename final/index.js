@@ -6,10 +6,11 @@ function cycleImg(imgContent, img, offset) {
       break;
     }
   }
+  console.log(nextImgIndex);
   if (
     nextImgIndex < 0 ||
     nextImgIndex > imgContent.length - 2 ||
-    !nextImgIndex
+    nextImgIndex === null
   ) {
     return;
   }
