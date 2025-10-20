@@ -252,6 +252,7 @@
 
             // --- DATA PERSISTENCE ---
             const STORAGE_KEY = 'pokerLedgerData';
+
             const getUserId = () => {
                 let userId = localStorage.getItem('pokerLedgerUserId');
                 if (!userId) {
@@ -426,7 +427,7 @@
                 renderScores();
                 renderRoundHistory();
             });
-            endGameBtn.addEventListener('click', () => endGameModal.classList.remove('hidden');
+            endGameBtn.addEventListener('click', () => endGameModal.classList.remove('hidden'));
             confirmEndGameBtn.addEventListener('click', endAndSaveSession);
             cancelEndGameBtn.addEventListener('click', () => endGameModal.classList.add('hidden'));
             addRoundBtn.addEventListener('click', openRoundModal);
