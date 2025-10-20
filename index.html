@@ -1,15 +1,454 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>陳錦顒</title>
+    <title>Poker Night Ledger</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Nunito', sans-serif;
+            background-color: #fcefee; /* A soft fallback color */
+            background-image: radial-gradient(at 0% 0%, hsla(333, 100%, 94%, 1) 0px, transparent 50%),
+                              radial-gradient(at 95% 95%, hsla(28, 100%, 93%, 1) 0px, transparent 50%);
+            color: #5d54a4; /* A soft dark purple for text */
+            overflow-x: hidden;
+            overflow-y: auto;
+        }
+
+        h1, h2, h3 {
+            font-weight: 900;
+            color: #5d54a4;
+        }
+
+        .screen {
+            min-height: 100vh;
+            width: 100vw;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem; /* Adjusted for mobile */
+            transition: opacity 0.4s ease-in-out, transform 0.4s ease-in-out;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+        
+        @media (min-width: 640px) { /* sm breakpoint */
+            .screen {
+                padding: 1.5rem;
+            }
+        }
+
+        .screen.hidden {
+            opacity: 0;
+            transform: scale(0.98);
+            pointer-events: none;
+        }
+
+        .main-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+            padding: 1.5rem; /* Adjusted for mobile */
+            width: 100%;
+        }
+
+        @media (min-width: 640px) { /* sm breakpoint */
+            .main-card {
+                padding: 2rem;
+            }
+        }
+
+        .btn {
+            border-radius: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 12px rgba(93, 84, 164, 0.1);
+            border: none;
+            padding: 0.8rem 1.5rem;
+        }
+        .btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(93, 84, 164, 0.2);
+        }
+        .btn:disabled {
+            cursor: not-allowed;
+            opacity: 0.6;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .btn-primary { /* Soft pink/peach */
+            background-color: #f38181;
+            color: white;
+        }
+
+        .btn-secondary { /* Soft purple */
+            background-color: #957dad;
+            color: white;
+        }
+        
+        .btn-tertiary { /* Lighter, for navigation */
+             background-color: #e4e3e3;
+             color: #5d54a4;
+        }
+
+        .btn-danger { /* A gentle red for destructive actions */
+            background-color: #f08a5d;
+            color: white;
+        }
+
+        .form-input {
+            background: #ffffff;
+            border: 2px solid #e0dced;
+            border-radius: 12px;
+            color: #5d54a4;
+            font-weight: 700;
+            padding: 0.8rem 1rem;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+        .form-input::placeholder {
+            color: #a39ccf;
+        }
+        .form-input:focus {
+            outline: none;
+            border-color: #957dad;
+            box-shadow: 0 0 0 3px rgba(149, 125, 173, 0.2);
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .score-positive { color: #2a9d8f; }
+        .score-negative { color: #e76f51; }
+        .score-neutral { color: #5d54a4; }
+    </style>
 </head>
-
 <body>
-    <h1>陳錦顒</h1>
-    <p>s1103544</p>
-</body>
 
+    <!-- Home Screen -->
+    <div id="home-screen" class="screen">
+        <div class="w-full max-w-2xl text-center space-y-8 p-2 sm:p-4">
+            <h1 class="text-4xl sm:text-5xl tracking-tight">Poker Ledger</h1>
+            <p class="text-base sm:text-lg text-gray-600">Keep track of your game nights.</p>
+            <button id="go-to-setup-btn" class="btn btn-primary w-full max-w-sm mx-auto py-3 sm:py-4 text-base sm:text-lg">Start New Game</button>
+            <div class="space-y-4 pt-4">
+                <h2 class="text-2xl sm:text-3xl">Past Sessions</h2>
+                <div id="session-history-list" class="space-y-3 max-h-[50vh] overflow-y-auto pr-2">
+                    <!-- Session history will be injected here -->
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Setup Screen -->
+    <div id="setup-screen" class="screen hidden">
+        <div class="main-card max-w-md w-full text-center space-y-6 fade-in relative">
+            <button id="back-to-home-btn" class="absolute top-4 left-4 btn btn-tertiary w-10 h-10 p-0 text-xl flex items-center justify-center font-black">&lt;</button>
+            <h2 class="text-2xl sm:text-3xl">New Game</h2>
+            <p class="text-gray-600">Add players to get started.</p>
+            
+            <div class="flex space-x-2">
+                <input type="text" id="player-name-input" placeholder="Enter player name" class="form-input w-full">
+                <button id="add-player-btn" class="btn btn-primary px-6">Add</button>
+            </div>
+
+            <div id="player-list" class="space-y-3 min-h-[120px] max-h-56 overflow-y-auto pr-2"></div>
+
+            <button id="start-game-btn" class="btn btn-secondary w-full py-3 text-lg">Start Game</button>
+        </div>
+    </div>
+
+    <!-- Game Screen -->
+    <div id="game-screen" class="screen hidden">
+         <div class="w-full max-w-4xl mx-auto p-2 sm:p-4 space-y-6">
+            <div class="flex justify-between items-center">
+                <h2 class="text-2xl sm:text-3xl">Game In Progress</h2>
+                <button id="end-game-btn" class="btn btn-danger px-4 py-2">End Game</button>
+            </div>
+            
+            <div id="player-scores" class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2 sm:gap-4"></div>
+
+            <h3 class="text-xl sm:text-2xl pt-4 sm:pt-6">Round History</h3>
+            <div id="round-history" class="main-card p-4 space-y-3 max-h-64 overflow-y-auto"></div>
+        </div>
+
+        <button id="add-round-btn" class="btn btn-primary fixed bottom-4 right-4 sm:bottom-8 sm:right-8 w-14 h-14 sm:w-16 sm:h-16 rounded-full flex items-center justify-center text-3xl font-bold shadow-lg">+</button>
+    </div>
+    
+    <!-- Add Round Modal -->
+    <div id="add-round-modal" class="fixed inset-0 bg-black bg-opacity-30 backdrop-blur-sm flex items-center justify-center hidden z-40 p-4">
+        <div class="main-card w-full max-w-md space-y-6 relative fade-in">
+            <button id="close-modal-btn" class="absolute top-4 right-5 text-2xl text-gray-500 hover:text-gray-800">&times;</button>
+            <h3 class="text-xl sm:text-2xl text-center">Record New Round</h3>
+            <div id="round-inputs" class="space-y-3 max-h-64 overflow-y-auto pr-2"></div>
+            <div class="text-center font-bold text-lg" id="round-total-check">
+                Total: <span id="round-total-value" class="text-gray-700">0</span>
+            </div>
+            <p id="round-error" class="text-red-500 text-center h-5"></p>
+            <button id="save-round-btn" class="btn btn-secondary w-full py-3 text-lg">Save Round</button>
+        </div>
+    </div>
+
+    <!-- End Game Confirmation Modal -->
+    <div id="end-game-modal" class="fixed inset-0 bg-black bg-opacity-30 backdrop-blur-sm flex items-center justify-center hidden z-40 p-4">
+        <div class="main-card w-full max-w-sm space-y-4 relative text-center fade-in">
+            <h3 class="text-2xl">End Game?</h3>
+            <p class="text-gray-600">This will save the session to your history.</p>
+            <div class="flex justify-center space-x-4 pt-4">
+                <button id="cancel-end-game-btn" class="btn btn-tertiary px-6 sm:px-8 py-3">Cancel</button>
+                <button id="confirm-end-game-btn" class="btn btn-danger px-6 sm:px-8 py-3">Save & End</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- STATE MANAGEMENT ---
+            let players = [];
+            let rounds = [];
+            let appData = { userId: null, sessions: [] };
+
+            // --- DOM Elements ---
+            const screens = {
+                home: document.getElementById('home-screen'),
+                setup: document.getElementById('setup-screen'),
+                game: document.getElementById('game-screen')
+            };
+            const playerNameInput = document.getElementById('player-name-input');
+            const addPlayerBtn = document.getElementById('add-player-btn');
+            const playerList = document.getElementById('player-list');
+            const startGameBtn = document.getElementById('start-game-btn');
+            const playerScores = document.getElementById('player-scores');
+            const addRoundBtn = document.getElementById('add-round-btn');
+            const endGameBtn = document.getElementById('end-game-btn');
+            const addRoundModal = document.getElementById('add-round-modal');
+            const closeModalBtn = document.getElementById('close-modal-btn');
+            const roundInputs = document.getElementById('round-inputs');
+            const saveRoundBtn = document.getElementById('save-round-btn');
+            const roundTotalValue = document.getElementById('round-total-value');
+            const roundError = document.getElementById('round-error');
+            const roundHistory = document.getElementById('round-history');
+            const endGameModal = document.getElementById('end-game-modal');
+            const confirmEndGameBtn = document.getElementById('confirm-end-game-btn');
+            const cancelEndGameBtn = document.getElementById('cancel-end-game-btn');
+            const goToSetupBtn = document.getElementById('go-to-setup-btn');
+            const backToHomeBtn = document.getElementById('back-to-home-btn');
+            const sessionHistoryList = document.getElementById('session-history-list');
+
+            // --- DATA PERSISTENCE ---
+            const STORAGE_KEY = 'pokerLedgerData';
+            const getUserId = () => {
+                let userId = localStorage.getItem('pokerLedgerUserId');
+                if (!userId) {
+                    userId = crypto.randomUUID();
+                    localStorage.setItem('pokerLedgerUserId', userId);
+                }
+                return userId;
+            };
+            const loadData = () => {
+                const rawData = localStorage.getItem(STORAGE_KEY);
+                if (rawData) appData = JSON.parse(rawData);
+                appData.userId = getUserId();
+            };
+            const saveData = () => localStorage.setItem(STORAGE_KEY, JSON.stringify(appData));
+
+            // --- NAVIGATION ---
+            const showScreen = (screenName) => {
+                Object.values(screens).forEach(screen => screen.classList.add('hidden'));
+                screens[screenName].classList.remove('hidden');
+            };
+
+            // --- RENDER FUNCTIONS ---
+            function renderSessionHistory() {
+                sessionHistoryList.innerHTML = '';
+                if (appData.sessions.length === 0) {
+                    sessionHistoryList.innerHTML = '<p class="text-gray-500">No past sessions found.</p>';
+                    return;
+                }
+                const sortedSessions = [...appData.sessions].sort((a,b) => new Date(b.date) - new Date(a.date));
+                sortedSessions.forEach(session => {
+                    const sessionEl = document.createElement('div');
+                    sessionEl.className = 'main-card p-4 text-left fade-in';
+                    const sessionDate = new Date(session.date).toLocaleString([], { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'});
+                    let playersHtml = '<div class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-1 mt-2">';
+                    session.players.sort((a,b) => b.finalTotal - a.finalTotal).forEach(p => {
+                        const scoreClass = p.finalTotal > 0 ? 'score-positive' : p.finalTotal < 0 ? 'score-negative' : 'score-neutral';
+                        playersHtml += `
+                            <div class="flex justify-between">
+                                <span class="font-bold truncate">${p.name}</span>
+                                <span class="${scoreClass} font-bold">$${p.finalTotal.toFixed(2)}</span>
+                            </div>`;
+                    });
+                    playersHtml += '</div>';
+                    sessionEl.innerHTML = `<p class="font-bold text-lg text-purple-800">${sessionDate}</p>${playersHtml}`;
+                    sessionHistoryList.appendChild(sessionEl);
+                });
+            }
+
+            const renderPlayerList = () => {
+                playerList.innerHTML = '';
+                if (players.length === 0) {
+                    playerList.innerHTML = '<p class="text-gray-500">Add some players!</p>';
+                } else {
+                    players.forEach((player, index) => {
+                        const playerEl = document.createElement('div');
+                        playerEl.className = 'flex justify-between items-center bg-white p-3 rounded-lg animate-fade-in shadow-sm';
+                        playerEl.innerHTML = `
+                            <span class="font-bold text-lg">${player.name}</span>
+                            <button data-index="${index}" class="remove-player-btn text-red-500 font-black text-xl w-8 h-8 flex items-center justify-center rounded-full hover:bg-red-100 transition-colors">&times;</button>`;
+                        playerList.appendChild(playerEl);
+                    });
+                }
+                startGameBtn.disabled = players.length < 2;
+            };
+
+            const addPlayer = () => {
+                const name = playerNameInput.value.trim();
+                if (name && !players.some(p => p.name.toLowerCase() === name.toLowerCase())) {
+                    players.push({ name: name, total: 0 });
+                    playerNameInput.value = '';
+                    renderPlayerList();
+                }
+                 playerNameInput.focus();
+            };
+
+            const renderScores = () => {
+                playerScores.innerHTML = '';
+                [...players].sort((a, b) => b.total - a.total).forEach(player => {
+                    const scoreClass = player.total > 0 ? 'score-positive' : player.total < 0 ? 'score-negative' : 'score-neutral';
+                    const scoreEl = document.createElement('div');
+                    scoreEl.className = 'main-card p-3 sm:p-4 text-center space-y-1 fade-in';
+                    scoreEl.innerHTML = `
+                        <p class="text-lg sm:text-xl font-bold truncate">${player.name}</p>
+                        <p class="text-2xl sm:text-3xl font-black ${scoreClass}">$${player.total.toFixed(2)}</p>`;
+                    playerScores.appendChild(scoreEl);
+                });
+            };
+            
+            const renderRoundHistory = () => {
+                roundHistory.innerHTML = rounds.length === 0 ? '<p class="text-gray-500 text-center">No rounds recorded yet.</p>' : '';
+                rounds.slice().reverse().forEach((round, index) => {
+                    const roundEl = document.createElement('div');
+                    roundEl.className = 'bg-white/50 p-3 rounded-lg fade-in';
+                    let detailsHtml = `<p class="font-bold text-purple-800 mb-2">Round ${rounds.length - index}</p><div class="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-1 text-sm">`;
+                    for(const [playerName, amount] of Object.entries(round)){
+                        const amountColor = amount > 0 ? 'score-positive' : 'score-negative';
+                        detailsHtml += `<div class="flex justify-between"><span>${playerName}:</span> <span class="font-bold ${amountColor}">${amount > 0 ? '+' : ''}$${amount.toFixed(2)}</span></div>`;
+                    }
+                    detailsHtml += `</div>`;
+                    roundEl.innerHTML = detailsHtml;
+                    roundHistory.appendChild(roundEl);
+                });
+            };
+
+            const endAndSaveSession = () => {
+                appData.sessions.push({
+                    id: crypto.randomUUID(),
+                    date: new Date().toISOString(),
+                    players: players.map(p => ({ name: p.name, finalTotal: p.total })),
+                    rounds: rounds
+                });
+                saveData();
+                players = []; rounds = [];
+                renderPlayerList();
+                endGameModal.classList.add('hidden');
+                renderSessionHistory();
+                showScreen('home');
+            };
+
+            const openRoundModal = () => {
+                roundInputs.innerHTML = '';
+                players.forEach((player, index) => {
+                    roundInputs.innerHTML += `
+                        <div class="flex items-center space-x-3">
+                            <label for="player-round-${index}" class="w-1/3 text-base sm:text-lg font-bold truncate">${player.name}</label>
+                            <input type="number" step="0.01" id="player-round-${index}" data-name="${player.name}" class="form-input w-2/3" placeholder="0.00">
+                        </div>`;
+                });
+                updateRoundTotal();
+                roundError.textContent = '';
+                addRoundModal.classList.remove('hidden');
+            };
+            
+            const closeRoundModal = () => addRoundModal.classList.add('hidden');
+            const updateRoundTotal = () => {
+                const total = Array.from(roundInputs.querySelectorAll('input')).reduce((sum, input) => sum + (parseFloat(input.value) || 0), 0);
+                roundTotalValue.textContent = total.toFixed(2);
+                roundTotalValue.className = Math.abs(total) < 0.01 ? 'score-positive' : 'score-negative';
+            };
+            
+            const saveRound = () => {
+                const inputs = roundInputs.querySelectorAll('input');
+                let total = 0;
+                let currentRound = {};
+                inputs.forEach(input => {
+                    const value = parseFloat(input.value) || 0;
+                    total += value;
+                    currentRound[input.dataset.name] = value;
+                });
+                if (Math.abs(total) > 0.01) {
+                    roundError.textContent = 'The sum of all amounts must be zero.';
+                    return;
+                }
+                players.forEach(player => player.total += currentRound[player.name] || 0);
+                rounds.push(currentRound);
+                renderScores();
+                renderRoundHistory();
+                closeRoundModal();
+            };
+
+            // --- Event Listeners & Init ---
+            addPlayerBtn.addEventListener('click', addPlayer);
+            playerNameInput.addEventListener('keyup', (e) => e.key === 'Enter' && addPlayer());
+            playerList.addEventListener('click', (e) => {
+                if (e.target.classList.contains('remove-player-btn')) {
+                    players.splice(parseInt(e.target.dataset.index), 1);
+                    renderPlayerList();
+                }
+            });
+            startGameBtn.addEventListener('click', () => {
+                showScreen('game');
+                renderScores();
+                renderRoundHistory();
+            });
+            endGameBtn.addEventListener('click', () => endGameModal.classList.remove('hidden');
+            confirmEndGameBtn.addEventListener('click', endAndSaveSession);
+            cancelEndGameBtn.addEventListener('click', () => endGameModal.classList.add('hidden'));
+            addRoundBtn.addEventListener('click', openRoundModal);
+            closeModalBtn.addEventListener('click', closeRoundModal);
+            addRoundModal.addEventListener('click', (e) => e.target === addRoundModal && closeRoundModal());
+            roundInputs.addEventListener('input', updateRoundTotal);
+            saveRoundBtn.addEventListener('click', saveRound);
+            goToSetupBtn.addEventListener('click', () => {
+                players = []; rounds = [];
+                renderPlayerList();
+                showScreen('setup');
+            });
+            backToHomeBtn.addEventListener('click', () => showScreen('home'));
+
+            function init() {
+                loadData();
+                renderSessionHistory();
+                showScreen('home');
+            }
+            init();
+        });
+    </script>
+</body>
 </html>
+
