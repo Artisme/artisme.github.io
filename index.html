@@ -3,453 +3,652 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Poker Night Ledger</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
+    <title>Lesson 10 Review: Flashcards & Grammar</title>
     <style>
+        :root {
+            --bg-page: #fdfdfd;
+            --bg-container: #ffffff;
+            --bg-tab-bar: #f0f4f8;
+            --bg-tab-active: #ffffff;
+            --bg-tab-inactive: #e0f2f1;
+            --border-color: #dee2e6;
+            --text-primary: #212529;
+            
+            --color-card-front: #fff9c4; /* Pastel Yellow */
+            --color-card-back: #e1f5fe; /* Pastel Blue */
+            --color-card-border: #b2dfdb;
+
+            --color-grammar-header: #e8eaf6; /* Pastel Lavender */
+            --color-grammar-header-text: #3f51b5;
+            --color-grammar-pattern: #d63384;
+            --color-grammar-example: #6c757d;
+
+            --color-button: #b3e5fc; /* Pastel Blue */
+            --color-button-hover: #81d4fa;
+            --color-button-text: #000;
+        }
+
         body {
-            font-family: 'Nunito', sans-serif;
-            background-color: #fcefee; /* A soft fallback color */
-            background-image: radial-gradient(at 0% 0%, hsla(333, 100%, 94%, 1) 0px, transparent 50%),
-                              radial-gradient(at 95% 95%, hsla(28, 100%, 93%, 1) 0px, transparent 50%);
-            color: #5d54a4; /* A soft dark purple for text */
-            overflow-x: hidden;
-            overflow-y: auto;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+            line-height: 1.6;
+            background-color: var(--bg-page);
+            color: var(--text-primary);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
         }
 
-        h1, h2, h3 {
-            font-weight: 900;
-            color: #5d54a4;
+        .container {
+            width: 100%;
+            max-width: 900px;
+            margin: 20px auto;
+            background-color: var(--bg-container);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            overflow: hidden;
         }
 
-        .screen {
-            min-height: 100vh;
-            width: 100vw;
+        /* --- Tab Controls --- */
+        .tab-bar {
+            display: flex;
+            background-color: var(--bg-tab-bar);
+            border-bottom: 1px solid var(--border-color);
+        }
+        .tab-button {
+            padding: 15px 25px;
+            border: none;
+            background-color: var(--bg-tab-inactive);
+            color: var(--text-primary);
+            font-size: 1.1em;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            border-right: 1px solid var(--border-color);
+        }
+        .tab-button:last-child {
+            border-right: none;
+        }
+        .tab-button.active {
+            background-color: var(--bg-tab-active);
+            border-bottom-color: var(--bg-tab-active);
+            position: relative;
+            top: 1px;
+            border-top-left-radius: 8px;
+            border-top-right-radius: 8px;
+        }
+        .tab-button:not(.active):hover {
+            background-color: #cce8e6;
+        }
+
+        /* --- Tab Content Panels --- */
+        .tab-content {
+            padding: 20px;
+        }
+        .tab-panel {
+            display: none; /* Hidden by default */
+        }
+        .tab-panel.active {
+            display: block; /* Shown when active */
+        }
+
+        /* --- Flashcard Styles --- */
+        #flashcard-container {
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 1rem; /* Adjusted for mobile */
-            transition: opacity 0.4s ease-in-out, transform 0.4s ease-in-out;
-            position: absolute;
-            top: 0;
-            left: 0;
+            min-height: 400px;
         }
-        
-        @media (min-width: 640px) { /* sm breakpoint */
-            .screen {
-                padding: 1.5rem;
-            }
+        .flashcard-scene {
+            width: 90%;
+            max-width: 500px;
+            height: 300px;
+            perspective: 1000px;
+            margin-bottom: 20px;
         }
-
-        .screen.hidden {
-            opacity: 0;
-            transform: scale(0.98);
-            pointer-events: none;
-        }
-
-        .main-card {
-            background: rgba(255, 255, 255, 0.7);
-            backdrop-filter: blur(10px);
-            border-radius: 24px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
-            padding: 1.5rem; /* Adjusted for mobile */
+        .flashcard {
             width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.6s;
+            cursor: pointer;
         }
-
-        @media (min-width: 640px) { /* sm breakpoint */
-            .main-card {
-                padding: 2rem;
-            }
+        .flashcard.is-flipped {
+            transform: rotateY(180deg);
         }
-
-        .btn {
+        .flashcard-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5em;
+            font-weight: bold;
+            color: var(--text-primary);
             border-radius: 12px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            transition: all 0.2s ease;
-            box-shadow: 0 4px 12px rgba(93, 84, 164, 0.1);
+            border: 2px solid var(--color-card-border);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .flashcard-front {
+            background-color: var(--color-card-front);
+        }
+        .flashcard-back {
+            background-color: var(--color-card-back);
+            transform: rotateY(180deg);
+            font-size: 1.8em;
+            padding: 20px;
+            text-align: center;
+        }
+        .flashcard-nav {
+            display: flex;
+            justify-content: space-between;
+            width: 90%;
+            max-width: 500px;
+        }
+        .nav-button {
+            padding: 12px 25px;
+            font-size: 1em;
+            font-weight: 600;
+            color: var(--color-button-text);
+            background-color: var(--color-button);
             border: none;
-            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s, box-shadow 0.3s;
         }
-        .btn:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(93, 84, 164, 0.2);
+        .nav-button:hover {
+            background-color: var(--color-button-hover);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
-        .btn:disabled {
-            cursor: not-allowed;
-            opacity: 0.6;
-            transform: none;
-            box-shadow: none;
-        }
-
-        .btn-primary { /* Soft pink/peach */
-            background-color: #f38181;
-            color: white;
+        #card-counter {
+            font-size: 1.1em;
+            color: #666;
+            margin-top: 15px;
         }
 
-        .btn-secondary { /* Soft purple */
-            background-color: #957dad;
-            color: white;
+        /* --- Grammar Styles --- */
+        #grammar-review h1 {
+            text-align: center;
+            color: var(--color-grammar-header-text);
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 10px;
+            margin-top: 0;
         }
-        
-        .btn-tertiary { /* Lighter, for navigation */
-             background-color: #e4e3e3;
-             color: #5d54a4;
+        .grammar-point {
+            background-color: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            overflow: hidden;
         }
-
-        .btn-danger { /* A gentle red for destructive actions */
-            background-color: #f08a5d;
-            color: white;
+        .grammar-header {
+            background-color: var(--color-grammar-header);
+            padding: 15px 20px;
+            border-bottom: 1px solid var(--border-color);
         }
-
-        .form-input {
-            background: #ffffff;
-            border: 2px solid #e0dced;
-            border-radius: 12px;
-            color: #5d54a4;
-            font-weight: 700;
-            padding: 0.8rem 1rem;
-            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        .grammar-header h2 {
+            margin: 0;
+            color: var(--color-grammar-header-text);
         }
-        .form-input::placeholder {
-            color: #a39ccf;
+        .grammar-header .pattern {
+            font-family: "Courier New", Courier, monospace;
+            font-size: 1.1em;
+            font-weight: bold;
+            color: var(--color-grammar-pattern);
+            margin-top: 5px;
         }
-        .form-input:focus {
-            outline: none;
-            border-color: #957dad;
-            box-shadow: 0 0 0 3px rgba(149, 125, 173, 0.2);
+        .grammar-body {
+            padding: 20px;
         }
-        
-        .fade-in {
-            animation: fadeIn 0.5s ease-in-out;
+        .grammar-body h3 {
+            color: var(--color-grammar-header-text);
+            border-bottom: 1px solid #e9ecef;
+            padding-bottom: 5px;
+            margin-top: 0;
         }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(15px); }
-            to { opacity: 1; transform: translateY(0); }
+        .grammar-body ul {
+            padding-left: 20px;
         }
-        
-        .score-positive { color: #2a9d8f; }
-        .score-negative { color: #e76f51; }
-        .score-neutral { color: #5d54a4; }
+        .grammar-body li {
+            margin-bottom: 8px;
+        }
+        .example {
+            font-style: italic;
+            color: var(--color-grammar-example);
+            padding-left: 15px;
+            border-left: 3px solid #b0bec5;
+            margin-bottom: 10px;
+            background-color: #f8f9fa;
+            padding-top: 5px;
+            padding-bottom: 5px;
+        }
+        .exercise {
+            background-color: #fdfdfd;
+            border: 1px dashed #ced4da;
+            padding: 15px;
+            margin-top: 15px;
+            border-radius: 5px;
+        }
+        .exercise p {
+            margin-top: 0;
+            margin-bottom: 10px;
+        }
+        code {
+            font-family: "Courier New", Courier, monospace;
+            background-color: #f0f0f0;
+            padding: 2px 5px;
+            border-radius: 3px;
+        }
     </style>
 </head>
 <body>
 
-    <!-- Home Screen -->
-    <div id="home-screen" class="screen">
-        <div class="w-full max-w-2xl text-center space-y-8 p-2 sm:p-4">
-            <h1 class="text-4xl sm:text-5xl tracking-tight">Poker Ledger</h1>
-            <p class="text-base sm:text-lg text-gray-600">Keep track of your game nights.</p>
-            <button id="go-to-setup-btn" class="btn btn-primary w-full max-w-sm mx-auto py-3 sm:py-4 text-base sm:text-lg">Start New Game</button>
-            <div class="space-y-4 pt-4">
-                <h2 class="text-2xl sm:text-3xl">Past Sessions</h2>
-                <div id="session-history-list" class="space-y-3 max-h-[50vh] overflow-y-auto pr-2">
-                    <!-- Session history will be injected here -->
+    <div class="container">
+        <!-- Tab Bar -->
+        <div class="tab-bar">
+            <button class="tab-button active" data-tab="flashcards">Flashcards</button>
+            <button class="tab-button" data-tab="grammar">Grammar Review</button>
+        </div>
+
+        <!-- Flashcards Panel -->
+        <div id="flashcards" class="tab-panel active">
+            <div id="flashcard-container">
+                <div class="flashcard-scene">
+                    <div class="flashcard" id="flashcard">
+                        <div class="flashcard-face flashcard-front" id="flashcard-front"></div>
+                        <div class="flashcard-face flashcard-back" id="flashcard-back"></div>
+                    </div>
                 </div>
+                <div class="flashcard-nav">
+                    <button id="prev-card" class="nav-button">Previous</button>
+                    <button id="next-card" class="nav-button">Next</button>
+                </div>
+                <div id="card-counter">Card 1 / 51</div>
             </div>
         </div>
-    </div>
-    
-    <!-- Setup Screen -->
-    <div id="setup-screen" class="screen hidden">
-        <div class="main-card max-w-md w-full text-center space-y-6 fade-in relative">
-            <button id="back-to-home-btn" class="absolute top-4 left-4 btn btn-tertiary w-10 h-10 p-0 text-xl flex items-center justify-center font-black">&lt;</button>
-            <h2 class="text-2xl sm:text-3xl">New Game</h2>
-            <p class="text-gray-600">Add players to get started.</p>
-            
-            <div class="flex space-x-2">
-                <input type="text" id="player-name-input" placeholder="Enter player name" class="form-input w-full">
-                <button id="add-player-btn" class="btn btn-primary px-6">Add</button>
-            </div>
 
-            <div id="player-list" class="space-y-3 min-h-[120px] max-h-56 overflow-y-auto pr-2"></div>
+        <!-- Grammar Review Panel -->
+        <div id="grammar" class="tab-panel">
+            <div id="grammar-review">
+                <h1>Lesson 10 Grammar Points</h1>
 
-            <button id="start-game-btn" class="btn btn-secondary w-full py-3 text-lg">Start Game</button>
-        </div>
-    </div>
+                <!-- Grammar Point 1: ...的話 -->
+                <div class="grammar-point">
+                    <div class="grammar-header">
+                        <h2>1-1: ...的話 (dehuà)</h2>
+                        <div class="pattern">(要是/如果) + Condition + 的話, ...</div>
+                    </div>
+                    <div class="grammar-body">
+                        <h3>Usage</h3>
+                        <p>Expresses a conditional mood ("if..."). The clause before <code>的話</code> is the condition, and the clause after it is the result. <code>要是</code> (yàoshi) or <code>如果</code> (rúguǒ) can be used at the beginning for emphasis but are optional.</p>
+                        
+                        <h3>Examples (from materials)</h3>
+                        <ul>
+                            <li><span class="example">王: 寄到日本的航空信要貼多少錢郵票？<br>李: 不超重的話, 十三塊。</span> (Bù chāozhòng dehuà, shísān kuài.) - If it's not overweight, thirteen dollars.</li>
+                            <li><span class="example">要是下雨的話, 怎麼去王老師家？</span> (Yàoshi xià yǔ dehuà, zěnme qù Wáng lǎoshī jiā?) - If it rains, how do we get to Teacher Wang's house?</li>
+                            <li><span class="example">如果這種洗衣機不錯的話, 我就買。</span> (Rúguǒ zhè zhǒng xǐyījī bùcuò dehuà, wǒ jiù mǎi.) - If this kind of washing machine is good, I'll buy it.</li>
+                        </ul>
 
-    <!-- Game Screen -->
-    <div id="game-screen" class="screen hidden">
-         <div class="w-full max-w-4xl mx-auto p-2 sm:p-4 space-y-6">
-            <div class="flex justify-between items-center">
-                <h2 class="text-2xl sm:text-3xl">Game In Progress</h2>
-                <button id="end-game-btn" class="btn btn-danger px-4 py-2">End Game</button>
-            </div>
-            
-            <div id="player-scores" class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2 sm:gap-4"></div>
+                        <h3>Exercise (Fill in the blanks)</h3>
+                        <div class="exercise">
+                            <p>1. A: 你明天下午要做什麼？<br>B: 還沒決定。要是 ______ 的話我想去看電影。</p>
+                            <p>2. A: 這樣的房子不好找。<br>B: ______ 的話, biérén (別人) 就要了。</p>
+                        </div>
+                    </div>
+                </div>
 
-            <h3 class="text-xl sm:text-2xl pt-4 sm:pt-6">Round History</h3>
-            <div id="round-history" class="main-card p-4 space-y-3 max-h-64 overflow-y-auto"></div>
-        </div>
+                <!-- Grammar Point 2: 每...就... -->
+                <div class="grammar-point">
+                    <div class="grammar-header">
+                        <h2>1-2: 每...就... (měi...jiù...)</h2>
+                        <div class="pattern">每 + (Nu + M + N), 就 + V...</div>
+                    </div>
+                    <div class="grammar-body">
+                        <h3>Usage</h3>
+                        <p>Shows a regularly repeated action. It means "every... then..." or "for each... then...". The <code>就</code> (jiù) can sometimes be omitted.</p>
+                        
+                        <h3>Examples (from materials)</h3>
+                        <ul>
+                            <li><span class="example">每超重十公克就加九塊錢。</span> (Měi chāozhòng shí gōngkè jiù jiā jiǔ kuài qián.) - For every ten grams overweight, (they) add nine dollars.</li>
+                            <li><span class="example">王: 信超重的話, 要貼多少錢郵票？<br>李: 每超重十公克加九塊。</span> (...Měi chāozhòng shí gōngkè jiā jiǔ kuài.) - ...For every ten grams overweight, add nine dollars.</li>
+                        </ul>
 
-        <button id="add-round-btn" class="btn btn-primary fixed bottom-4 right-4 sm:bottom-8 sm:right-8 w-14 h-14 sm:w-16 sm:h-16 rounded-full flex items-center justify-center text-3xl font-bold shadow-lg">+</button>
-    </div>
-    
-    <!-- Add Round Modal -->
-    <div id="add-round-modal" class="fixed inset-0 bg-black bg-opacity-30 backdrop-blur-sm flex items-center justify-center hidden z-40 p-4">
-        <div class="main-card w-full max-w-md space-y-6 relative fade-in">
-            <button id="close-modal-btn" class="absolute top-4 right-5 text-2xl text-gray-500 hover:text-gray-800">&times;</button>
-            <h3 class="text-xl sm:text-2xl text-center">Record New Round</h3>
-            <div id="round-inputs" class="space-y-3 max-h-64 overflow-y-auto pr-2"></div>
-            <div class="text-center font-bold text-lg" id="round-total-check">
-                Total: <span id="round-total-value" class="text-gray-700">0</span>
-            </div>
-            <p id="round-error" class="text-red-500 text-center h-5"></p>
-            <button id="save-round-btn" class="btn btn-secondary w-full py-3 text-lg">Save Round</button>
-        </div>
-    </div>
+                        <h3>Exercise (Fill in the blanks)</h3>
+                        <div class="exercise">
+                            <p>1. 王: 租房子要簽約嗎？<br>李: 要, 每 ______ 就要簽一次。</p>
+                            <p>2. 李: 第一 gōnglǐ (公里) 六十五塊錢, 以後每 ______ 就加五塊錢。</p>
+                            <p>3. 李: 打長途電話到日本去要多少錢？<br>王: 每 ______ 付三十五塊。</p>
+                        </div>
+                    </div>
+                </div>
 
-    <!-- End Game Confirmation Modal -->
-    <div id="end-game-modal" class="fixed inset-0 bg-black bg-opacity-30 backdrop-blur-sm flex items-center justify-center hidden z-40 p-4">
-        <div class="main-card w-full max-w-sm space-y-4 relative text-center fade-in">
-            <h3 class="text-2xl">End Game?</h3>
-            <p class="text-gray-600">This will save the session to your history.</p>
-            <div class="flex justify-center space-x-4 pt-4">
-                <button id="cancel-end-game-btn" class="btn btn-tertiary px-6 sm:px-8 py-3">Cancel</button>
-                <button id="confirm-end-game-btn" class="btn btn-danger px-6 sm:px-8 py-3">Save & End</button>
+                <!-- Grammar Point 3: 就 vs. 才 -->
+                <div class="grammar-point">
+                    <div class="grammar-header">
+                        <h2>1-3: 就 (jiù) vs. 才 (cái)</h2>
+                        <div class="pattern">...就 + V + 了 (sooner than expected) <br> ...才 + V (later than expected)</div>
+                    </div>
+                    <div class="grammar-body">
+                        <h3>Usage</h3>
+                        <p>These adverbs indicate the speaker's perception of time.</p>
+                        <ul>
+                            <li><code>就 (jiù)</code>: Indicates an action happened sooner, faster, or easier than expected.</li>
+                            <li><code>才 (cái)</code>: Indicates an action happened later, slower, or with more difficulty than expected.</li>
+                        </ul>
+                        
+                        <h3>Examples (from materials)</h3>
+                        <ul>
+                            <li><span class="example">李: 他昨天來了。<br>王: 你朋友還沒來嗎？ (comparing with "he arrived yesterday")</span> - (This implies "yesterday" was earlier than the speaker thought).</li>
+                            <li><span class="example">李: 我半個小時以前就到了。</span> (Wǒ bàn ge xiǎoshí yǐqián jiù dào le.) - I arrived half an hour ago (sooner than expected).</li>
+                            <li><span class="example">李: 五分鐘以前就走了。</span> (Wǔ fēnzhōng yǐqián jiù zǒu le.) - (He/She) left five minutes ago (implying this was relatively recent/quick).</li>
+                            <li><span class="example">李: 念書是自己的事, 不能等老師說了你才看。</span> (Niànshū shì zìjǐ de shì, bùnéng děng lǎoshī shuōle nǐ cái kàn.) - Studying is your own business, you can't wait until *after* the teacher tells you to (only then) study.</li>
+                        </ul>
+
+                        <h3>Exercise (Choose 就 or 才)</h3>
+                        <div class="exercise">
+                            <p>1. 王: 你朋友到了吧。<br>李: 還沒。他明天 ______ 來。</p>
+                            <p>2. 王: 對不起, 我來晚了。<br>李: 你怎麼現在 ______ 來？</p>
+                            <p>3. 王: 三點五十分的公車走了嗎？<br>李: 還沒有。奇怪, 已經五十五分了。應該五分鐘以前 ______ 來了。</p>
+                            <p>4. 李: 不行。今天事情多, 大概九點 ______ 能走。</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Grammar Point 4: 把 (bǎ) -->
+                <div class="grammar-point">
+                    <div class="grammar-header">
+                        <h2>2-1 & 3-2: 把 (bǎ) Sentence</h2>
+                        <div class="pattern">S + (Adv/AV) + 把 + Object + V + Other Element (C)</div>
+                    </div>
+                    <div class="grammar-body">
+                        <h3>Usage</h3>
+                        <p>The "disposal" <code>把 (bǎ)</code> sentence emphasizes what happens to a <strong>specific, definite object</strong>. The verb cannot be simple; it must have an "other element" (like a complement, <code>了</code>, <code>給</code>, <code>在</code>, etc.) to show the result of the disposal.</p>
+                        <p>Use <code>把</code> when you are:</p>
+                        <ol>
+                            <li><strong>Changing the object's location:</strong> <code>我把書放在桌子上｡</code> (I put the book on the table.)</li>
+                            <li><strong>Giving the object to someone:</strong> <code>請把身分證給我｡</code> (Please give me the ID card.)</li>
+                            <li><strong>Changing the object's status:</strong> <code>我把桌子擦乾淨｡</code> (I wiped the table clean.)</li>
+                            <li><strong>Making the object "disappear" (e.g., eating, selling):</strong> <code>我把蛋糕吃了｡</code> (I ate the cake.)</li>
+                        </ol>
+                        <p><strong>Note:</strong> Verbs like <code>喜歡</code> (like), <code>知道</code> (know), <code>有</code> (have), or <code>是</code> (to be) <strong>cannot</strong> be used with <code>把</code>.</p>
+
+                        <h3>Examples (from materials)</h3>
+                        <ul>
+                            <li><span class="example">李: 請把通知單給我。</span> (Qǐng bǎ tōngzhīdān gěi wǒ.) - Please give me the notification slip.</li>
+                            <li><span class="example">李: 噢, 我把(那個包子)吃了。</span> (Ō, wǒ bǎ (nèige bāozi) chī le.) - Oh, I ate (that bun).</li>
+                            <li><span class="example">王: 為什麼要把身分證影本給他們？<br>李: 因為旅行社要我把身分證影本給他們。</span> (Yīnwèi lǚxíngshè yào wǒ bǎ shēnfènzhèng yǐngběn gěi tāmen.)</li>
+                        </ul>
+
+                        <h3>Exercise (Fill in the blanks / Rearrange)</h3>
+                        <div class="exercise">
+                            <p>1. A: 這本書, 張先生要我拿來。<br>B: 謝謝, ______ 就可以了。 (放)</p>
+                            <p>2. A: 請把身分證給我。<br>B: 對不起, 我 ______ , 忘了帶來了。 (留)</p>
+                            <p>3. (Rearrange the words to clean the room using <code>把</code>):<br>
+                                Example: 衣服 / 拿去洗 -> <code>我把衣服拿去洗。</code>
+                                <br>a. 鞋子 / 擦乾淨 -> <code>____________________。</code>
+                                <br>b. 手錶 / 找出來 -> <code>____________________。</code>
+                                <br>c. 很多零錢 / 放到 (抽屜) -> <code>____________________。</code>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Grammar Point 5: V 在 -->
+                <div class="grammar-point">
+                    <div class="grammar-header">
+                        <h2>2-2: V 在 (V zài)</h2>
+                        <div class="pattern">V + 在 + Location</div>
+                    </div>
+                    <div class="grammar-body">
+                        <h3>Usage</h3>
+                        <p>Indicates the resulting location of an action. The object (if any) comes before the verb, often in a <code>把</code> sentence, or is implied.</p>
+                        <p>Used with:</p>
+                        <ul>
+                            <li><strong>Posture Verbs:</strong> <code>坐</code> (sit), <code>站</code> (stand), <code>睡</code> (sleep), <code>住</code> (live), etc.</li>
+                            <li><strong>Displacement Verbs:</strong> <code>放</code> (put), <code>留</code> (leave), <code>停</code> (park), <code>掛</code> (hang), <code>貼</code> (stick), etc.</li>
+                        </ul>
+                        
+                        <h3>Examples (from materials)</h3>
+                        <ul>
+                            <li><span class="example">李: 要。請簽在這裡。</span> (Yào. Qǐng qiān zài zhèlǐ.) - Yes. Please sign here.</li>
+                            <li><span class="example">A: 我的杯子呢？ B: B: 你的杯子放在桌子上。</span> (Nǐ de bēizi fàng zài zhuōzi shàng.) - Your cup is placed on the table.</li>
+                        </ul>
+
+                        <h3>Exercise (Fill in the blanks)</h3>
+                        <div class="exercise">
+                            <p>1. A: 小王, 你有沒有老陳辦公室的電話？<br>B: 有, 我 ______ 了。 (寫)</p>
+                            <p>2. A: 對不起, 我來晚了。還有位子嗎？<br>B: 你可以 ______ 。 (坐)</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Grammar Point 6: V 給 -->
+                <div class="grammar-point">
+                    <div class="grammar-header">
+                        <h2>3-1: V 給 (V gěi)</h2>
+                        <div class="pattern">V + 給 + Indirect Object (Person)</div>
+                    </div>
+                    <div class="grammar-body">
+                        <h3>Usage</h3>
+                        <p>Indicates the recipient (the person "given" the action). The structure is often <code>S + V + O + 給 + Person</code> or <code>S + 把 + O + V + 給 + Person</code>.</p>
+                        
+                        <h3>Examples (from materials)</h3>
+                        <ul>
+                            <li><span class="example">他從日本回來, 帶給我一本書。</span> (Tā cóng Rìběn huílái, dài gěi wǒ yī běn shū.) - He came back from Japan and brought me a book.</li>
+                            <li><span class="example">買書的錢, 應該 ______ 你還是王小姐？</span> (Mǎi shū de qián, yīnggāi ______ nǐ háishì Wáng xiǎojiě?)</li>
+                        </ul>
+
+                        <h3>Exercise (Fill in the blanks)</h3>
+                        <div class="exercise">
+                            <p>1. 東三街的房子你 ______ 誰了？ (租)</p>
+                            <p>2. 老王的舊車要 ______ 李小姐。 (賣)</p>
+                            <p>3. 那能不能麻煩你把 ______ 給他？ (轉這封信)</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Grammar Point 7: 幫 (bāng) -->
+                <div class="grammar-point">
+                    <div class="grammar-header">
+                        <h2>3-3: 幫 (bāng)</h2>
+                        <div class="pattern">N1 + 幫 + N2 + V(O)</div>
+                    </div>
+                    <div class="grammar-body">
+                        <h3>Usage</h3>
+                        <p>N1 helps N2 perform an action. <code>幫 (bāng)</code> means "to help" or "for".</p>
+                        
+                        <h3>Examples (from materials)</h3>
+                        <ul>
+                            <li><span class="example">李: 沒關係。我有傳真機, 可以幫你傳真。</span> (Méi guānxì. Wǒ yǒu chuánzhēnjī, kěyǐ bāng nǐ chuánzhēn.) - No problem. I have a fax machine, I can help you fax.</li>
+                            <li><span class="example">王: 我的車有一點問題。<br>李: 你明天把 ______ 。我幫你看看。</span> (Nǐ míngtiān bǎ ______. Wǒ bāng nǐ kànkan.)</li>
+                        </ul>
+
+                        <h3>Exercise (Fill in the blanks)</h3>
+                        <div class="exercise">
+                            <p>1. A: 我忘了帶辦公室的 yàoshi (鑰匙), 怎麼辦？<br>B: 沒關係。可以打電話請小陳 ______ 。</p>
+                            <p>2. A: 我要到郵局去。<br>B: 我有一張包裹的通知單, 你能不能 ______ ？ (幫我領)</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Grammar Point 8: V 來 / V 去 -->
+                <div class="grammar-point">
+                    <div class="grammar-header">
+                        <h2>3-4: V 來 / V 去 (V lái / V qù)</h2>
+                        <div class="pattern">(DV) + V + 來 / 去</div>
+                    </div>
+                    <div class="grammar-body">
+                        <h3>Usage</h3>
+                        <p>A directional complement that indicates the direction of an action relative to the speaker.</p>
+                        <ul>
+                            <li><code>來 (lái)</code>: Action moves *towards* the speaker. (e.g., <code>拿來</code> ná lái - bring here)</li>
+                            <li><code>去 (qù)</code>: Action moves *away* from the speaker. (e.g., <code>拿去</code> ná qù - take there)</li>
+                        </ul>
+                        <p>This can also act as the complement in a <code>把</code> sentence.</p>
+                        
+                        <h3>Examples (from materials)</h3>
+                        <ul>
+                            <li><span class="example">李: 請把身分證影本拿來。</span> (Qǐng bǎ shēnfènzhèng yǐngběn ná lái.) - Please bring the ID photocopy here.</li>
+                            <li><span class="example">李: 你可以先把 ______ 。自己帶太重了。 (寄去)</span> (Nǐ kěyǐ xiān bǎ ______ . Zìjǐ dài tài zhòng le.)</li>
+                        </ul>
+
+                        <h3>Exercise (Fill in the blanks)</h3>
+                        <div class="exercise">
+                            <p>1. A: 我應酬該拿什麼東西來？<br>B: 請把身分證影本拿 ______ 。</p>
+                            <p>2. A: 我明天要送東西到王先生家去。<br>B: 不要忘了把 ______ 。 (帶錢)</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Grammar Point 9: 呢 (ne) -->
+                <div class="grammar-point">
+                    <div class="grammar-header">
+                        <h2>3-5: 呢 (ne)</h2>
+                        <div class="pattern">QW / A-not-A ... + 呢?</div>
+                    </div>
+                    <div class="grammar-body">
+                        <h3>Usage</h3>
+                        <p>A question particle placed at the end of a question-word (QW) sentence or an "A-not-A" question. It does <strong>not</strong> go with <code>嗎 (ma)</code>.</p>
+                        <p>It conveys a tone of wonder or confusion, or simply softens the inquisitive tone of the question.</p>
+                        
+                        <h3>Examples (from materials)</h3>
+                        <ul>
+                            <li><span class="example">你買不買日本車, 也不買美國車, 那 ______？</span> (Nǐ mǎi bù mǎi Rìběn chē, yě bù mǎi Měiguó chē, nà ______?)</li>
+                            <li><span class="example">你那通電話不是打給錢書宣, 也不是打給張台生, 那是 ______？</span> (Nǐ nà tōng diànhuà bùshì dǎ gěi Qián Shūxuān, yě bùshì dǎ gěi Zhāng Táishēng, nà shì ______?)</li>
+                        </ul>
+
+                        <h3>Exercise (Fill in the blanks)</h3>
+                        <div class="exercise">
+                            <p>1. 王老師的電話小李不知道, 小張也不知道, ______？</p>
+                            <p>2. 趙奇, 明天是你妹妹的生日。我們送她 ______ , 還是 ______？</p>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // --- STATE MANAGEMENT ---
-            let players = [];
-            let rounds = [];
-            let appData = { userId: null, sessions: [] };
+        // --- Tab Switching Logic ---
+        const tabs = document.querySelectorAll('.tab-button');
+        const panels = document.querySelectorAll('.tab-panel');
 
-            // --- DOM Elements ---
-            const screens = {
-                home: document.getElementById('home-screen'),
-                setup: document.getElementById('setup-screen'),
-                game: document.getElementById('game-screen')
-            };
-            const playerNameInput = document.getElementById('player-name-input');
-            const addPlayerBtn = document.getElementById('add-player-btn');
-            const playerList = document.getElementById('player-list');
-            const startGameBtn = document.getElementById('start-game-btn');
-            const playerScores = document.getElementById('player-scores');
-            const addRoundBtn = document.getElementById('add-round-btn');
-            const endGameBtn = document.getElementById('end-game-btn');
-            const addRoundModal = document.getElementById('add-round-modal');
-            const closeModalBtn = document.getElementById('close-modal-btn');
-            const roundInputs = document.getElementById('round-inputs');
-            const saveRoundBtn = document.getElementById('save-round-btn');
-            const roundTotalValue = document.getElementById('round-total-value');
-            const roundError = document.getElementById('round-error');
-            const roundHistory = document.getElementById('round-history');
-            const endGameModal = document.getElementById('end-game-modal');
-            const confirmEndGameBtn = document.getElementById('confirm-end-game-btn');
-            const cancelEndGameBtn = document.getElementById('cancel-end-game-btn');
-            const goToSetupBtn = document.getElementById('go-to-setup-btn');
-            const backToHomeBtn = document.getElementById('back-to-home-btn');
-            const sessionHistoryList = document.getElementById('session-history-list');
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                // Deactivate all
+                tabs.forEach(t => t.classList.remove('active'));
+                panels.forEach(p => p.classList.remove('active'));
 
-            // --- DATA PERSISTENCE ---
-            const STORAGE_KEY = 'pokerLedgerData';
-
-            const getUserId = () => {
-                let userId = localStorage.getItem('pokerLedgerUserId');
-                if (!userId) {
-                    userId = crypto.randomUUID();
-                    localStorage.setItem('pokerLedgerUserId', userId);
-                }
-                return userId;
-            };
-            const loadData = () => {
-                const rawData = localStorage.getItem(STORAGE_KEY);
-                if (rawData) appData = JSON.parse(rawData);
-                appData.userId = getUserId();
-            };
-            const saveData = () => localStorage.setItem(STORAGE_KEY, JSON.stringify(appData));
-
-            // --- NAVIGATION ---
-            const showScreen = (screenName) => {
-                Object.values(screens).forEach(screen => screen.classList.add('hidden'));
-                screens[screenName].classList.remove('hidden');
-            };
-
-            // --- RENDER FUNCTIONS ---
-            function renderSessionHistory() {
-                sessionHistoryList.innerHTML = '';
-                if (appData.sessions.length === 0) {
-                    sessionHistoryList.innerHTML = '<p class="text-gray-500">No past sessions found.</p>';
-                    return;
-                }
-                const sortedSessions = [...appData.sessions].sort((a,b) => new Date(b.date) - new Date(a.date));
-                sortedSessions.forEach(session => {
-                    const sessionEl = document.createElement('div');
-                    sessionEl.className = 'main-card p-4 text-left fade-in';
-                    const sessionDate = new Date(session.date).toLocaleString([], { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'});
-                    let playersHtml = '<div class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-1 mt-2">';
-                    session.players.sort((a,b) => b.finalTotal - a.finalTotal).forEach(p => {
-                        const scoreClass = p.finalTotal > 0 ? 'score-positive' : p.finalTotal < 0 ? 'score-negative' : 'score-neutral';
-                        playersHtml += `
-                            <div class="flex justify-between">
-                                <span class="font-bold truncate">${p.name}</span>
-                                <span class="${scoreClass} font-bold">$${p.finalTotal.toFixed(2)}</span>
-                            </div>`;
-                    });
-                    playersHtml += '</div>';
-                    sessionEl.innerHTML = `<p class="font-bold text-lg text-purple-800">${sessionDate}</p>${playersHtml}`;
-                    sessionHistoryList.appendChild(sessionEl);
-                });
-            }
-
-            const renderPlayerList = () => {
-                playerList.innerHTML = '';
-                if (players.length === 0) {
-                    playerList.innerHTML = '<p class="text-gray-500">Add some players!</p>';
-                } else {
-                    players.forEach((player, index) => {
-                        const playerEl = document.createElement('div');
-                        playerEl.className = 'flex justify-between items-center bg-white p-3 rounded-lg animate-fade-in shadow-sm';
-                        playerEl.innerHTML = `
-                            <span class="font-bold text-lg">${player.name}</span>
-                            <button data-index="${index}" class="remove-player-btn text-red-500 font-black text-xl w-8 h-8 flex items-center justify-center rounded-full hover:bg-red-100 transition-colors">&times;</button>`;
-                        playerList.appendChild(playerEl);
-                    });
-                }
-                startGameBtn.disabled = players.length < 2;
-            };
-
-            const addPlayer = () => {
-                const name = playerNameInput.value.trim();
-                if (name && !players.some(p => p.name.toLowerCase() === name.toLowerCase())) {
-                    players.push({ name: name, total: 0 });
-                    playerNameInput.value = '';
-                    renderPlayerList();
-                }
-                 playerNameInput.focus();
-            };
-
-            const renderScores = () => {
-                playerScores.innerHTML = '';
-                [...players].sort((a, b) => b.total - a.total).forEach(player => {
-                    const scoreClass = player.total > 0 ? 'score-positive' : player.total < 0 ? 'score-negative' : 'score-neutral';
-                    const scoreEl = document.createElement('div');
-                    scoreEl.className = 'main-card p-3 sm:p-4 text-center space-y-1 fade-in';
-                    scoreEl.innerHTML = `
-                        <p class="text-lg sm:text-xl font-bold truncate">${player.name}</p>
-                        <p class="text-2xl sm:text-3xl font-black ${scoreClass}">$${player.total.toFixed(2)}</p>`;
-                    playerScores.appendChild(scoreEl);
-                });
-            };
-            
-            const renderRoundHistory = () => {
-                roundHistory.innerHTML = rounds.length === 0 ? '<p class="text-gray-500 text-center">No rounds recorded yet.</p>' : '';
-                rounds.slice().reverse().forEach((round, index) => {
-                    const roundEl = document.createElement('div');
-                    roundEl.className = 'bg-white/50 p-3 rounded-lg fade-in';
-                    let detailsHtml = `<p class="font-bold text-purple-800 mb-2">Round ${rounds.length - index}</p><div class="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-1 text-sm">`;
-                    for(const [playerName, amount] of Object.entries(round)){
-                        const amountColor = amount > 0 ? 'score-positive' : 'score-negative';
-                        detailsHtml += `<div class="flex justify-between"><span>${playerName}:</span> <span class="font-bold ${amountColor}">${amount > 0 ? '+' : ''}$${amount.toFixed(2)}</span></div>`;
-                    }
-                    detailsHtml += `</div>`;
-                    roundEl.innerHTML = detailsHtml;
-                    roundHistory.appendChild(roundEl);
-                });
-            };
-
-            const endAndSaveSession = () => {
-                appData.sessions.push({
-                    id: crypto.randomUUID(),
-                    date: new Date().toISOString(),
-                    players: players.map(p => ({ name: p.name, finalTotal: p.total })),
-                    rounds: rounds
-                });
-                saveData();
-                players = []; rounds = [];
-                renderPlayerList();
-                endGameModal.classList.add('hidden');
-                renderSessionHistory();
-                showScreen('home');
-            };
-
-            const openRoundModal = () => {
-                roundInputs.innerHTML = '';
-                players.forEach((player, index) => {
-                    roundInputs.innerHTML += `
-                        <div class="flex items-center space-x-3">
-                            <label for="player-round-${index}" class="w-1/3 text-base sm:text-lg font-bold truncate">${player.name}</label>
-                            <input type="number" step="0.01" id="player-round-${index}" data-name="${player.name}" class="form-input w-2/3" placeholder="0.00">
-                        </div>`;
-                });
-                updateRoundTotal();
-                roundError.textContent = '';
-                addRoundModal.classList.remove('hidden');
-            };
-            
-            const closeRoundModal = () => addRoundModal.classList.add('hidden');
-            const updateRoundTotal = () => {
-                const total = Array.from(roundInputs.querySelectorAll('input')).reduce((sum, input) => sum + (parseFloat(input.value) || 0), 0);
-                roundTotalValue.textContent = total.toFixed(2);
-                roundTotalValue.className = Math.abs(total) < 0.01 ? 'score-positive' : 'score-negative';
-            };
-            
-            const saveRound = () => {
-                const inputs = roundInputs.querySelectorAll('input');
-                let total = 0;
-                let currentRound = {};
-                inputs.forEach(input => {
-                    const value = parseFloat(input.value) || 0;
-                    total += value;
-                    currentRound[input.dataset.name] = value;
-                });
-                if (Math.abs(total) > 0.01) {
-                    roundError.textContent = 'The sum of all amounts must be zero.';
-                    return;
-                }
-                players.forEach(player => player.total += currentRound[player.name] || 0);
-                rounds.push(currentRound);
-                renderScores();
-                renderRoundHistory();
-                closeRoundModal();
-            };
-
-            // --- Event Listeners & Init ---
-            addPlayerBtn.addEventListener('click', addPlayer);
-            playerNameInput.addEventListener('keyup', (e) => e.key === 'Enter' && addPlayer());
-            playerList.addEventListener('click', (e) => {
-                if (e.target.classList.contains('remove-player-btn')) {
-                    players.splice(parseInt(e.target.dataset.index), 1);
-                    renderPlayerList();
-                }
+                // Activate clicked tab
+                tab.classList.add('active');
+                document.getElementById(tab.dataset.tab).classList.add('active');
             });
-            startGameBtn.addEventListener('click', () => {
-                showScreen('game');
-                renderScores();
-                renderRoundHistory();
-            });
-            endGameBtn.addEventListener('click', () => endGameModal.classList.remove('hidden'));
-            confirmEndGameBtn.addEventListener('click', endAndSaveSession);
-            cancelEndGameBtn.addEventListener('click', () => endGameModal.classList.add('hidden'));
-            addRoundBtn.addEventListener('click', openRoundModal);
-            closeModalBtn.addEventListener('click', closeRoundModal);
-            addRoundModal.addEventListener('click', (e) => e.target === addRoundModal && closeRoundModal());
-            roundInputs.addEventListener('input', updateRoundTotal);
-            saveRoundBtn.addEventListener('click', saveRound);
-            goToSetupBtn.addEventListener('click', () => {
-                players = []; rounds = [];
-                renderPlayerList();
-                showScreen('setup');
-            });
-            backToHomeBtn.addEventListener('click', () => showScreen('home'));
-
-            function init() {
-                loadData();
-                renderSessionHistory();
-                showScreen('home');
-            }
-            init();
         });
+
+        // --- Flashcard Logic ---
+        const flashcardData = [
+            {"front": "寄", "back": "jì - to mail"},
+            {"front": "信", "back": "xìn - letter"},
+            {"front": "航空信", "back": "hángkōngxìn - airmail"},
+            {"front": "貼", "back": "tiē - to paste, to stick"},
+            {"front": "郵票", "back": "yóupiào - stamp"},
+            {"front": "超重", "back": "chāozhòng - to be overweight"},
+            {"front": "重 / 輕", "back": "zhòng / qīng - heavy / light"},
+            {"front": "公克", "back": "gōngkè - gram"},
+            {"front": "加", "back": "jiā - to add"},
+            {"front": "封", "back": "fēng - (measure word for letters)"},
+            {"front": "地址", "back": "dìzhǐ - address"},
+            {"front": "明信片", "back": "míngxìnpiàn - postcard"},
+            {"front": "掛號信", "back": "guàhàoxìn - registered letter"},
+            {"front": "信封", "back": "xìnfēng - envelope"},
+            {"front": "郵筒", "back": "yóutǒng - mailbox (street)"},
+            {"front": "領", "back": "lǐng - to receive, to get"},
+            {"front": "包裹", "back": "bāoguǒ - package, parcel"},
+            {"front": "窗口", "back": "chuāngkǒu - service window"},
+            {"front": "把", "back": "bǎ - (disposal marker)"},
+            {"front": "通知單", "back": "tōngzhīdān - notification slip"},
+            {"front": "身分證", "back": "shēnfènzhèng - ID card"},
+            {"front": "圖章", "back": "túzhāng - seal, stamp"},
+            {"front": "帶", "back": "dài - to bring"},
+            {"front": "簽名", "back": "qiānmíng - to sign (one's name)"},
+            {"front": "旅行社", "back": "lǚxíngshè - travel agency"},
+            {"front": "影本", "back": "yǐngběn - photocopy"},
+            {"front": "傳真", "back": "chuánzhēn - fax"},
+            {"front": "傳真機", "back": "chuánzhēnjī - fax machine"},
+            {"front": "壞了", "back": "huài le - broken"},
+            {"front": "沒關係", "back": "méi guānxì - it doesn't matter, no problem"},
+            {"front": "郵局", "back": "yóujú - post office"},
+            {"front": "費用", "back": "fèiyòng - fee, cost"},
+            {"front": "鑰匙", "back": "yàoshi - key(s)"},
+            {"front": "影印", "back": "yǐngyìn - to photocopy"},
+            {"front": "老闆", "back": "lǎobǎn - boss"},
+            {"front": "計程車", "back": "jìchéngchē - taxi"},
+            {"front": "公里", "back": "gōnglǐ - kilometer"},
+            {"front": "運費", "back": "yùnfèi - shipping fee"},
+            {"front": "學費", "back": "xuéfèi - tuition fee"},
+            {"front": "水電費", "back": "shuǐdiànfèi - utilities fee"},
+            {"front": "生活費", "back": "shēnghuófèi - living expenses"},
+            {"front": "獎學金", "back": "jiǎngxuéjīn - scholarship"},
+            {"front": "儲值", "back": "chúzhí - to store value (on a card)"},
+            {"front": "宅配", "back": "zháipèi - home delivery"},
+            {"front": "郵寄", "back": "yóujì - to mail (via post office)"},
+            {"front": "店到店", "back": "diàn dào diàn - store-to-store (delivery)"},
+            {"front": "請假", "back": "qǐngjià - to ask for leave of absence"},
+            {"front": "講義", "back": "jiǎngyì - handout, lecture notes"},
+            {"front": "複習", "back": "fùxí - to review (lessons)"},
+            {"front": "邀請", "back": "yāoqǐng - to invite"},
+            {"front": "慶祝", "back": "qìngzhù - to celebrate"},
+            {"front": "零錢", "back": "língqián - loose change"},
+            {"front": "杯子", "back": "bēizi - cup, glass"},
+            {"front": "擦乾淨", "back": "cā gānjìng - to wipe clean"},
+            {"front": "找出來", "back": "zhǎo chūlái - to find (and take out)"},
+            {"front": "抽屜", "back": "chōutì - drawer"},
+            {"front": "放", "back": "fàng - to put, to place"},
+            {"front": "留", "back": "liú - to leave (behind)"},
+            {"front": "坐", "back": "zuò - to sit"}
+        ];
+
+        let currentCardIndex = 0;
+        const card = document.getElementById('flashcard');
+        const cardFront = document.getElementById('flashcard-front');
+        const cardBack = document.getElementById('flashcard-back');
+        const prevButton = document.getElementById('prev-card');
+        const nextButton = document.getElementById('next-card');
+        const cardCounter = document.getElementById('card-counter');
+
+        function showCard(index) {
+            const cardData = flashcardData[index];
+            cardFront.textContent = cardData.front;
+            cardBack.textContent = cardData.back;
+            card.classList.remove('is-flipped');
+            cardCounter.textContent = `Card ${index + 1} / ${flashcardData.length}`;
+        }
+
+        function flipCard() {
+            card.classList.toggle('is-flipped');
+        }
+
+        prevButton.addEventListener('click', () => {
+            currentCardIndex = (currentCardIndex - 1 + flashcardData.length) % flashcardData.length;
+            showCard(currentCardIndex);
+        });
+
+        nextButton.addEventListener('click', () => {
+            currentCardIndex = (currentCardIndex + 1) % flashcardData.length;
+            showCard(currentCardIndex);
+        });
+
+        card.addEventListener('click', flipCard);
+
+        // Show the first card on load
+        showCard(currentCardIndex);
     </script>
 </body>
 </html>
-
